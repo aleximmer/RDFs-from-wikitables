@@ -246,8 +246,9 @@ class Table:
 
     def generateRDFs(self, columns=None, threshold=0.0, path=None):
         """Save RDF statements generated from table."""
-
+        print('Hi')
         data = []
+        keyColumnName = self.keyName # Calculate name of key column
 
         for subColumnName, objColumnName in itertools.permutations(columns if columns else self.columnNames, 2):
             subColumn = self.column(subColumnName, content=True)
@@ -270,7 +271,12 @@ class Table:
 
             for i, row in enumerate(generatedPreciates):
                 for predicate in row:
-                    data.append([subColumn[i], predicate, objColumn[i], relCount[predicate]])
+                    # Generating additional infos for analyzing RDFs
+                    #objColumnName
+                    subIsKey = (keyColumnName == subColumnName)
+                    objIsKey = (keyColumnName == objColumnName)
+                    rowCount = len(subColumn)
+                    data.append([subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount])
 
         # TODO: Bring back after demo
         # from pandas import DataFrame
@@ -288,7 +294,7 @@ class Table:
             # TODO: Remove after demo
             matrix = []
             for row in data:
-                matrix.append([row[0], '<' + row[1] + '>', row[2], row[3]])
+                matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
             s = [[str(e) for e in row] for row in matrix]
             lens = [max(map(len, col)) for col in zip(*s)]
             fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)

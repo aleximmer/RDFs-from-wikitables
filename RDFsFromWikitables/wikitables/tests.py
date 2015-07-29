@@ -4,13 +4,6 @@ import os
 
 """Helper functions for evaluation and testing go here."""
 
-def crawl_pages():
-    f = open('titles2.txt', 'r', errors='ignore')
-    titles = f.read()
-    # FERTIG
-
-crawl_pages()
-
 def best_predicate_in_page(page, ignore=True):
     """Return predicate with highest relative occurance in page. Set 'ignore' to ignore '100%'."""
 

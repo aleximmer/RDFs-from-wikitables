@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             global num_threads, lock
-            titlesFile = os.path.join(PROJECT_DIR,"data/Titles.txt")
+            titlesFile = os.path.join(PROJECT_DIR, "data/Titles.txt")
             print(titlesFile)
             with open(titlesFile) as f:
                 content = f.readlines()
@@ -28,7 +28,7 @@ class Command(BaseCommand):
                         if num_threads < THREAD_MAX:
                             break
                         lock.release()
-                    start_new_thread(generateRDFsFor,(line,))
+                    start_new_thread(generateRDFsFor(line))
                     num_threads += 1
                     lock.release()
             except:
@@ -40,25 +40,30 @@ def generateRDFsFor(title):
     global num_threads, lock
 
     try:
-        """
+        print("Title: "+ str(title))
         wpage = wikipage(title)
-        pg = Page(title=title, link=wpage.url)
-        pg.save()
-
-        for table in wpage.tables:
-            # generate RDFS and store in following variables:
-                # rdf_subject, rdf_predicate, rdf_object, object_column_name, relative_occurency,
-                # subject_is_tablekey, object_is_tablekey, table_number, number_of_tablerows
-            # save the data:
-            RDF(related_page=pg, rdf_subject=rdf_subject, rdf_predicate=rdf_predicate, rdf_object=rdf_object,
-                object_column_name=object_column_name, relative_occurency=relative_occurency,
-                subject_is_tablekey=subject_is_tablekey, object_is_tablekey=object_is_tablekey,
-                table_number=table_number, number_of_tablerows=number_of_tablerows).save()
-        """
-        time.sleep(5)
-
-    except:
+        #pg = Page(title=title, link=wpage.url)
+        #pg.save()
+        if wpage.hasTable():
+            for table in wpage.tables():
+                # generate RDFS and store in following variables:
+                    # rdf_subject, rdf_predicate, rdf_object, object_column_name, relative_occurency,
+                    # subject_is_tablekey, object_is_tablekey, table_number, number_of_tablerows
+                print('.')
+                #rdfs = table.generateRDFs()
+                # save the data:
+                """RDF(related_page=pg, rdf_subject=rdf_subject, rdf_predicate=rdf_predicate, rdf_object=rdf_object,
+                    object_column_name=object_column_name, relative_occurency=relative_occurency,
+                    subject_is_tablekey=subject_is_tablekey, object_is_tablekey=object_is_tablekey,
+                    table_number=table_number, number_of_tablerows=number_of_tablerows).save()"""
+            time.sleep(5)
+        else:
+            print('Page has no tables')
+    except Exception as inst:
+        print(type(inst))     # the exception instance
+        print(inst)      # arguments stored in .args
         print("FAILED with title: " + str(title))
+        #raise Exception('shit fuck it')
 
     lock.acquire()
     num_threads -= 1

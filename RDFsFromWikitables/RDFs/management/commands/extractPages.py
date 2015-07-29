@@ -45,18 +45,22 @@ def generateRDFsFor(title):
         #pg = Page(title=title, link=wpage.url)
         #pg.save()
         if wpage.hasTable():
+            i = -1
             for table in wpage.tables():
+                i += 1
                 # generate RDFS and store in following variables:
                     # rdf_subject, rdf_predicate, rdf_object, object_column_name, relative_occurency,
                     # subject_is_tablekey, object_is_tablekey, table_number, number_of_tablerows
-                print('.')
-                #rdfs = table.generateRDFs()
-                # save the data:
-                """RDF(related_page=pg, rdf_subject=rdf_subject, rdf_predicate=rdf_predicate, rdf_object=rdf_object,
-                    object_column_name=object_column_name, relative_occurency=relative_occurency,
-                    subject_is_tablekey=subject_is_tablekey, object_is_tablekey=object_is_tablekey,
-                    table_number=table_number, number_of_tablerows=number_of_tablerows).save()"""
-            time.sleep(5)
+                rdfs = table.generateRDFs()
+                print(str(len(rdfs)) + ' new RDFs generated')
+                for rdf in rdfs:
+                    # save the data:
+                    # rdf = [subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount]
+                    print('RDF: ' + str(rdf))
+                    RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[32,
+                        object_column_name=rdf[3], relative_occurency=rdf[4],
+                        subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
+                        table_number=i, number_of_tablerows=rdf[7]).save()"""
         else:
             print('Page has no tables')
     except Exception as inst:

@@ -3,9 +3,9 @@ from _thread import start_new_thread, allocate_lock
 from django.core.management.base import BaseCommand
 from RDFs.models import RDF, Page
 from RDFsFromWikitables.settings import PROJECT_DIR
+from wikitables.page import Page as wikipage
 
-#something like
-#from wikitables.page import Page as wikipage
+import time
 
 THREAD_MAX = 16
 
@@ -40,6 +40,7 @@ def generateRDFsFor(title):
     global num_threads, lock
 
     try:
+        """
         wpage = wikipage(title)
         pg = Page(title=title, link=wpage.url)
         pg.save()
@@ -53,6 +54,8 @@ def generateRDFsFor(title):
                 object_column_name=object_column_name, relative_occurency=relative_occurency,
                 subject_is_tablekey=subject_is_tablekey, object_is_tablekey=object_is_tablekey,
                 table_number=table_number, number_of_tablerows=number_of_tablerows).save()
+        """
+        time.sleep(5)
 
     except:
         print("FAILED with title: " + str(title))

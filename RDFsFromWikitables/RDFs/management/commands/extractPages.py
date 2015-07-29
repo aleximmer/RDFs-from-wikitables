@@ -19,6 +19,7 @@ class Command(BaseCommand):
             print(titlesFile)
             with open(titlesFile) as f:
                 content = f.readlines()
+            print(str(len(content)) + ' lines in file')
             try:
                 for line in content:
                     while(True):

@@ -11,3 +11,6 @@ class PageAdmin(admin.ModelAdmin):
 class RDFAdmin(admin.ModelAdmin):
     list_display = ['rdf_subject', 'rdf_predicate', 'rdf_object', 'relative_occurency']
     ordering = ['relative_occurency',]
+
+admin.site.register(Page, PageAdmin)
+admin.site.register(RDF, RDFAdmin)

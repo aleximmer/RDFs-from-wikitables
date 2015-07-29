@@ -6,7 +6,7 @@ class RDFInline(admin.TabularInline):
     extra = 0
 
 class PageAdmin(admin.ModelAdmin):
-    inlines = [RDFAdmin,]
+    inlines = [RDFInline,]
 
 class RDFAdmin(admin.ModelAdmin):
     list_display = ['rdf_subject', 'rdf_predicate', 'rdf_object', 'relative_occurency']

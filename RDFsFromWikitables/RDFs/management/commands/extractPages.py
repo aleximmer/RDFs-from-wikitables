@@ -4,7 +4,8 @@ from django.core.management.base import BaseCommand
 from RDFs.models import RDF, Page
 from RDFsFromWikitables.settings import PROJECT_DIR
 
-import time
+#something like
+#from wikitables.page import Page as wikipage
 
 THREAD_MAX = 16
 
@@ -39,9 +40,19 @@ def generateRDFsFor(title):
     global num_threads, lock
 
     try:
-        # CODE HERE
-        print(title)
-        time.sleep(5)
+        wpage = wikipage(title)
+        pg = Page(title=title, link=wpage.url)
+        pg.save()
+
+        for table in wpage.tables:
+            # generate RDFS and store in following variables:
+                # rdf_subject, rdf_predicate, rdf_object, object_column_name, relative_occurency,
+                # subject_is_tablekey, object_is_tablekey, table_number, number_of_tablerows
+            # save the data:
+            RDF(related_page=pg, rdf_subject=rdf_subject, rdf_predicate=rdf_predicate, rdf_object=rdf_object,
+                object_column_name=object_column_name, relative_occurency=relative_occurency,
+                subject_is_tablekey=subject_is_tablekey, object_is_tablekey=object_is_tablekey,
+                table_number=table_number, number_of_tablerows=number_of_tablerows).save()
 
     except:
         print("FAILED with title: " + str(title))

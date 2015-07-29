@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+class RDFAdmin(admin.ModelAdmin):
+    list_display = ['rdf_subject', 'rdf_predicate', 'rdf_object', 'relative_occurency']
+    list_display_link = ['rdf_predicate']
+    ordering = ['relative_occurency']

@@ -57,10 +57,10 @@ def generateRDFsFor(title):
                     # save the data:
                     # rdf = [subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount]
                     print('RDF: ' + str(rdf))
-                    RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[32,
-                        object_column_name=rdf[3], relative_occurency=rdf[4],
-                        subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                        table_number=i, number_of_tablerows=rdf[7]).save()"""
+                    RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
+                            object_column_name=rdf[3], relative_occurency=rdf[4],
+                            subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
+                            table_number=i, number_of_tablerows=rdf[7]).save()
         else:
             print('Page has no tables')
     except Exception as inst:

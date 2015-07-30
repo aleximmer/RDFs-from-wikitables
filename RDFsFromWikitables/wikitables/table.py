@@ -277,28 +277,7 @@ class Table:
                     rowCount = len(subColumn)
                     data.append([subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount])
 
-        # TODO: Bring back after demo
-        # from pandas import DataFrame
-        # df = DataFrame(data, columns=['subject', 'predicate', 'object', 'certainty'])
-        # df['table'] = repr(self)
-        # df['page'] = self.pageTitle
-
-        # print("Generated %d statements with avg. certainty of %.0f%%." % (len(df.index), df['certainty'].mean() * 100))
-
-        if path:
-            # df.to_csv(path, index=False)
-            pass
-        else:
-            # return df
-            # TODO: Remove after demo
-            matrix = []
-            print("got here")
-            for row in data:
-                matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
-            s = [[str(e) for e in row] for row in matrix]
-            lens = [max(map(len, col)) for col in zip(*s)]
-            fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
-            table = [fmt.format(*row) for row in s]
-            #print('\n'.join(table))
-            print("return now")
-            return table
+        matrix = []
+        for row in data:
+            matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
+        return matrix

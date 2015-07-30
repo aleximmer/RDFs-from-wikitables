@@ -8,7 +8,7 @@ from wikitables.page import Page as wikipage
 
 import time
 
-THREAD_MAX = 64
+THREAD_MAX = 32
 
 num_threads = 0
 lock = allocate_lock()
@@ -17,7 +17,7 @@ db_lock = allocate_lock()
 class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
-            global num_threads, lock
+            global num_threads, lock, db_lock
             titlesFile = os.path.join(PROJECT_DIR, "data/Titles.txt")
             print(titlesFile)
             with open(titlesFile) as f:
@@ -30,9 +30,15 @@ class Command(BaseCommand):
                         if num_threads < THREAD_MAX:
                             break
                         lock.release()
-                    num_threads += 1
-                    start_new_thread(generateRDFsFor,(line,))
+
+                    db_lock.acquire()
+                    if not Page.objects.filter(title=str(title)):
+                        db_lock.release()
+                        num_threads += 1
+                        start_new_thread(generateRDFsFor,(line,))
+                        lock.release()
                     lock.release()
+                    db_lock.release()
 
             except Exception as inst:
                 print("Error appeared: " + str(type(inst)))
@@ -45,16 +51,6 @@ def generateRDFsFor(title):
     global num_threads, lock, db_lock
 
     print("Title: "+ str(title).strip())
-
-    db_lock.acquire()
-    if Page.objects.filter(title=str(title)):
-        db_lock.release()
-        print(str(title).strip() + " already extracted.")
-        lock.acquire()
-        num_threads -= 1
-        lock.release()
-        return
-    db_lock.release()
 
     try:
         wpage = None

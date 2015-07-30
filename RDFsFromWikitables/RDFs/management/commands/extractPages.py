@@ -8,7 +8,7 @@ from wikitables.page import Page as wikipage
 
 import time
 
-THREAD_MAX = 16
+THREAD_MAX = 32
 
 num_threads = 0
 lock = allocate_lock()
@@ -25,17 +25,14 @@ class Command(BaseCommand):
             print(str(len(content)) + ' lines in file')
             try:
                 for line in content:
-                    """
                     while(True):
                         lock.acquire()
                         if num_threads < THREAD_MAX:
                             break
                         lock.release()
-                    """
-                    #start_new_thread(generateRDFsFor,(line,))
-                    generateRDFsFor(line)
-                    #num_threads += 1
-                    #lock.release()
+                    num_threads += 1
+                    start_new_thread(generateRDFsFor,(line,))
+                    lock.release()
 
             except Exception as inst:
                 print("Error appeared: " + str(type(inst)))
@@ -68,15 +65,13 @@ def generateRDFsFor(title):
                     print(str(len(rdfs)) + ' new RDFs generated for table ' + str(title).strip())
                     for rdf in rdfs:
                         # save the data:
-                        #"""
+                        db_lock.acquire()
                         if ('/resource/' in rdf[0]) and rdf[0] and rdf[1] and rdf[2]:
-                            db_lock.acquire()
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],
                                     subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
                                     table_number=i, number_of_tablerows=rdf[7]).save()
-                            db_lock.release()
-                        #"""
+                        db_lock.release()
             else:
                 print('Page with title \''+str(title).strip()+'\' has no tables')
     except Exception as inst:
@@ -85,12 +80,12 @@ def generateRDFsFor(title):
                 str(inst.args) + "\n" +
                 "FAILED for page with title: " + str(title).strip() + "\n" +
                 "------------------------------")
-    except: # TODO: Wie fange ich irgendein beliebigen Error ab und kann ihn behandeln
+    except:
         print("\n------------------------------\n" +
                 "Unknown error appeared for page with title: " + str(title).strip() + "\n" +
                 "------------------------------")
 
-    #lock.acquire()
-    #num_threads -= 1
-    #lock.release()
+    lock.acquire()
+    num_threads -= 1
+    lock.release()
     return

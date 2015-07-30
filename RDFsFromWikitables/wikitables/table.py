@@ -94,7 +94,12 @@ class Table:
 
     def column(self, key, content=False):
         i = key if type(key) is int else self.columnNames.index(key)
-        return [sparql.cellContent(row[i]) if content else row[i] for row in self.rows]
+        try:
+            return [sparql.cellContent(row[i]) if content else row[i] for row in self.rows]
+        except IndexError as inst:
+            print(str(type(inst)))
+            print(inst.args)
+            return []
 
     def skip(self):
         # Something's wrong with rows (TODO: find 'something')
@@ -247,11 +252,17 @@ class Table:
     def generateRDFs(self, columns=None, threshold=0.0, path=None):
         """Save RDF statements generated from table."""
         data = []
-        keyColumnName = self.keyName # Calculate name of key column
+        keyIndex = self.key # Calculate name of key column
+        if keyIndex is not None and keyIndex < 0 and keyIndex >= len(self.columnNames):
+            keyColumnName = self.columnNames[keyIndex]
+        else:
+            keyColumnName = None
 
         for subColumnName, objColumnName in itertools.permutations(columns if columns else self.columnNames, 2):
             subColumn = self.column(subColumnName, content=True)
             objColumn = self.column(objColumnName, content=True)
+            if len(subColumn) = 0 or len(objColumn) = 0:
+                raise Exception("Table failed because of defective row formattings")
 
             existingPredicates = [sparql.predicates(subColumn[i], objColumn[i]) for i in range(len(subColumn))]
 
@@ -276,8 +287,29 @@ class Table:
                     objIsKey = (keyColumnName == objColumnName)
                     rowCount = len(subColumn)
                     data.append([subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount])
+            # TODO: Bring back after demo
+            # from pandas import DataFrame
+            # df = DataFrame(data, columns=['subject', 'predicate', 'object', 'certainty'])
+            # df['table'] = repr(self)
+            # df['page'] = self.pageTitle
 
-        matrix = []
-        for row in data:
-            matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
-        return matrix
+            # print("Generated %d statements with avg. certainty of %.0f%%." % (len(df.index), df['certainty'].mean() * 100))
+
+            if path:
+                # df.to_csv(path, index=False)
+                pass
+            else:
+                # return df
+                # TODO: Remove after demo
+                matrix = []
+                for row in data:
+                    matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
+                s = [[str(e) for e in row] for row in matrix]
+                lens = [max(map(len, col)) for col in zip(*s)]
+                fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+                table = [fmt.format(*row) for row in s]
+                return matrix
+                # print('\n'.join(table))
+                # return df
+        else:
+            return []

@@ -261,7 +261,7 @@ class Table:
         for subColumnName, objColumnName in itertools.permutations(columns if columns else self.columnNames, 2):
             subColumn = self.column(subColumnName, content=True)
             objColumn = self.column(objColumnName, content=True)
-            if len(subColumn) = 0 or len(objColumn) = 0:
+            if len(subColumn) == 0 or len(objColumn) == 0:
                 raise Exception("Table failed because of defective row formattings")
 
             existingPredicates = [sparql.predicates(subColumn[i], objColumn[i]) for i in range(len(subColumn))]

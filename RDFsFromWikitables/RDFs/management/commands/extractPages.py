@@ -57,20 +57,19 @@ def generateRDFsFor(title):
                     "Couldn\'t find wikipedia page with this title\n" +
                     "FAILED for page with title: " + str(title).strip() + "\n" +
                     "------------------------------")
-        pg = Page(title=str(title), link=str(wpage.url), tables=len(wpage.tables))
-        pg.save()
         if wpage:
+            #pg = Page(title=str(title), link=str(wpage.url), tables=len(wpage.tables))
+            #pg.save()
+            pg = "Test"
             if wpage.hasTable:
                 i = -1
                 for table in wpage.tables:
                     i += 1
-                    print("has real tables")
                     rdfs = table.generateRDFs()
-                    print("generated RDFs")
-                    print(type(rdfs))
                     print(str(len(rdfs)) + ' new RDFs generated for table ' + str(title).strip())
                     for rdf in rdfs:
                         # save the data:
+                        """
                         if '/resource/' in rdf[0]:
                             db_lock.acquire()
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
@@ -78,12 +77,13 @@ def generateRDFsFor(title):
                                     subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
                                     table_number=i, number_of_tablerows=rdf[7]).save()
                             db_lock.release()
+                        """
             else:
                 print('Page with title \''+str(title).strip()+'\' has no tables')
     except Exception as inst:
         print("\n------------------------------\n" +
                 "Error appeared: " + str(type(inst)) + "\n" +
-                inst.args +
+                str(inst.args) + "\n" +
                 "FAILED for page with title: " + str(title).strip() + "\n" +
                 "------------------------------")
     except: # TODO: Wie fange ich irgendein beliebigen Error ab und kann ihn behandeln

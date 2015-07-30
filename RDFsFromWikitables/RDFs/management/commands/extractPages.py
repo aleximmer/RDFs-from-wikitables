@@ -8,7 +8,7 @@ from wikitables.page import Page as wikipage
 
 import time
 
-THREAD_MAX = 64
+THREAD_MAX = 32
 
 num_threads = 0
 lock = allocate_lock()

@@ -71,7 +71,7 @@ def generateRDFsFor(title):
                     print(str(len(rdfs)) + ' new RDFs generated for table ' + str(title).strip())
                     for rdf in rdfs:
                         # save the data:
-                        if '/resource/' in rdf[0]:
+                        if '/resource/' in rdf[0] and if (rdf[0] and rdf[1] and rdf[2]):
                             db_lock.acquire()
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],

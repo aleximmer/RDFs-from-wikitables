@@ -246,7 +246,6 @@ class Table:
 
     def generateRDFs(self, columns=None, threshold=0.0, path=None):
         """Save RDF statements generated from table."""
-        print('Hi')
         data = []
         keyColumnName = self.keyName # Calculate name of key column
 
@@ -293,11 +292,13 @@ class Table:
             # return df
             # TODO: Remove after demo
             matrix = []
+            print("got here")
             for row in data:
                 matrix.append([row[0], '<' + row[1] + '>', row[2], row[3], row[4], row[5], row[6], row[7]])
             s = [[str(e) for e in row] for row in matrix]
             lens = [max(map(len, col)) for col in zip(*s)]
             fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
             table = [fmt.format(*row) for row in s]
-            print('\n'.join(table))
-            # return df
+            #print('\n'.join(table))
+            print("return now")
+            return table

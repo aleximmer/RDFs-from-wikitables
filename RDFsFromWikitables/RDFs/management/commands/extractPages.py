@@ -8,7 +8,7 @@ from wikitables.page import Page as wikipage
 
 import time
 
-THREAD_MAX = 32
+THREAD_MAX = 64
 
 num_threads = 0
 lock = allocate_lock()
@@ -45,6 +45,14 @@ def generateRDFsFor(title):
     global num_threads, lock, db_lock
 
     print("Title: "+ str(title).strip())
+
+    if Page.objects.filter(title=str(title)):
+        print(str(title).strip() + " already extracted.")
+        lock.acquire()
+        num_threads -= 1
+        lock.release()
+        return
+
     try:
         wpage = None
         try:
@@ -67,7 +75,7 @@ def generateRDFsFor(title):
                         # save the data:
                         db_lock.acquire()
                         # exclude errors like empty subject, predicate or object and
-                        # errors such as subject != resource 
+                        # errors such as subject != resource
                         if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],

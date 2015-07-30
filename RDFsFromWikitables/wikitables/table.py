@@ -94,7 +94,12 @@ class Table:
 
     def column(self, key, content=False):
         i = key if type(key) is int else self.columnNames.index(key)
-        return [sparql.cellContent(row[i]) if content else row[i] for row in self.rows]
+        try:
+            return [sparql.cellContent(row[i]) if content else row[i] for row in self.rows]
+        except IndexError as inst:
+            print(str(type(inst)))
+            print(inst.args)
+            return []
 
     def skip(self):
         # Something's wrong with rows (TODO: find 'something')
@@ -256,6 +261,8 @@ class Table:
         for subColumnName, objColumnName in itertools.permutations(columns if columns else self.columnNames, 2):
             subColumn = self.column(subColumnName, content=True)
             objColumn = self.column(objColumnName, content=True)
+            if len(subColumn) = 0 or len(objColumn) = 0:
+                raise Exception("Table failed because of defective row formattings")
 
             existingPredicates = [sparql.predicates(subColumn[i], objColumn[i]) for i in range(len(subColumn))]
 

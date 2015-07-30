@@ -32,7 +32,7 @@ class Command(BaseCommand):
                         lock.release()
 
                     db_lock.acquire()
-                    if not Page.objects.filter(title=str(title)):
+                    if not Page.objects.filter(title=str(line)):
                         db_lock.release()
                         num_threads += 1
                         start_new_thread(generateRDFsFor,(line,))

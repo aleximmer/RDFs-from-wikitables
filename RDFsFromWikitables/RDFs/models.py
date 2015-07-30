@@ -1,8 +1,9 @@
 from django.db import models
 
 class Page(models.Model):
-    link = models.URLField(max_length=512, unique=True)
+    link = models.URLField(max_length=512)
     title = models.CharField(max_length=512)
+    tables = models.IntegerField()
 
     def __str__(self):
         return str(self.title)

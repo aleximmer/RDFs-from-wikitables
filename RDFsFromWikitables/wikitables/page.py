@@ -13,9 +13,9 @@ class Page(wikipedia.WikipediaPage):
             results, suggestion = wikipedia.search(title, results=1, suggestion=True)
             try:
               title = suggestion or results[0]
-            except IndexError:
+              super().__init__(title, redirect=redirect, preload=preload)
+            except: #IndexError:
               raise wikipedia.PageError(title)
-          super().__init__(title, redirect=redirect, preload=preload)
         elif pageid is not None:
           super().__init__(pageid=pageid, preload=preload)
         else:

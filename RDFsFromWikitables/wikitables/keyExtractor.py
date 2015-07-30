@@ -337,8 +337,8 @@ def extractKeyColumn(originalHTMLSoup, articleName, abstracts = '', listCategori
 
 	except Exception as e:
 		# Might be an error caused by wrong html format or unsupported html encoding
-		print('Error: ' + str(e))
-		print(traceback.format_exc())
+		print('KeyExtraction Error: ' + str(e))
+		# print(traceback.format_exc())
 		keyCol = None
 
 	return keyCol

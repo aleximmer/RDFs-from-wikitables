@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from SPARQLWrapper import SPARQLWrapper, JSON, SPARQLExceptions
 import json
 
-wrapper = SPARQLWrapper("http://dbpedia.org/sparql")
+wrapper = SPARQLWrapper("http://xiserve:8890/sparql")
 wrapper.setReturnFormat(JSON)
 
 # Resource (with redirect) -> Resource (with redirect)

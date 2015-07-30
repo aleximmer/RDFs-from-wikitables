@@ -287,7 +287,6 @@ class Table:
                     objIsKey = (keyColumnName == objColumnName)
                     rowCount = len(subColumn)
                     data.append([subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount])
-
             # TODO: Bring back after demo
             # from pandas import DataFrame
             # df = DataFrame(data, columns=['subject', 'predicate', 'object', 'certainty'])

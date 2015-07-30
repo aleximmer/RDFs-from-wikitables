@@ -71,14 +71,13 @@ def generateRDFsFor(title):
                     print(str(len(rdfs)) + ' new RDFs generated for table ' + str(title).strip())
                     for rdf in rdfs:
                         # save the data:
-                        rdf = [subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount]
-                        #print('RDF: ' + str(rdf))
-                        db_lock.acquire()
-                        RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
-                                object_column_name=rdf[3], relative_occurency=rdf[4],
-                                subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                                table_number=i, number_of_tablerows=rdf[7]).save()
-                        db_lock.release()
+                        if '/resource/' in rdf[0]:
+                            db_lock.acquire()
+                            RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
+                                    object_column_name=rdf[3], relative_occurency=rdf[4],
+                                    subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
+                                    table_number=i, number_of_tablerows=rdf[7]).save()
+                            db_lock.release()
             else:
                 print('Page with title \''+str(title).strip()+'\' has no tables')
     except Exception as inst:

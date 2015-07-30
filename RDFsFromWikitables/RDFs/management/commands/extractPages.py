@@ -66,7 +66,9 @@ def generateRDFsFor(title):
                     for rdf in rdfs:
                         # save the data:
                         db_lock.acquire()
-                        if ('/resource/' in rdf[0]) and rdf[0] and rdf[1] and rdf[2]:
+                        # exclude errors like empty subject, predicate or object and
+                        # errors such as subject != resource 
+                        if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],
                                     subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],

@@ -57,27 +57,27 @@ def generateRDFsFor(title):
                     "Couldn\'t find wikipedia page with this title\n" +
                     "FAILED for page with title: " + str(title).strip() + "\n" +
                     "------------------------------")
-        pg = Page(title=str(title), link=str(wpage.url))
+        pg = Page(title=str(title), link=str(wpage.url), tables=len(wpage.tables))
         pg.save()
         if wpage:
             if wpage.hasTable:
                 i = -1
-                tables = wpage.tables
-                for table in tables:
+                for table in wpage.tables:
                     i += 1
                     print("has real tables")
                     rdfs = table.generateRDFs()
                     print("generated RDFs")
+                    print(type(rdfs))
                     print(str(len(rdfs)) + ' new RDFs generated for table ' + str(title).strip())
                     for rdf in rdfs:
                         # save the data:
                         rdf = [subColumn[i], predicate, objColumn[i], objColumnName, relCount[predicate], subIsKey, objIsKey, rowCount]
                         #print('RDF: ' + str(rdf))
                         db_lock.acquire()
-                        """RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
+                        RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                 object_column_name=rdf[3], relative_occurency=rdf[4],
                                 subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                                table_number=i, number_of_tablerows=rdf[7]).save()"""
+                                table_number=i, number_of_tablerows=rdf[7]).save()
                         db_lock.release()
             else:
                 print('Page with title \''+str(title).strip()+'\' has no tables')

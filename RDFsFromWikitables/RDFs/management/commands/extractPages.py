@@ -8,7 +8,7 @@ from wikitables.page import Page as wikipage
 
 import time
 
-THREAD_MAX = 32
+THREAD_MAX = 64
 
 num_threads = 0
 lock = allocate_lock()
@@ -36,9 +36,9 @@ class Command(BaseCommand):
                         db_lock.release()
                         num_threads += 1
                         start_new_thread(generateRDFsFor,(line,))
-                        lock.release()
+                    else:
+                        db_lock.release()
                     lock.release()
-                    db_lock.release()
 
             except Exception as inst:
                 print("Error appeared: " + str(type(inst)))

@@ -70,7 +70,7 @@ def generateRDFsFor(title):
                     for rdf in rdfs:
                         # save the data:
                         """
-                        if '/resource/' in rdf[0]:
+                        if '/resource/' in rdf[0] and if (rdf[0] and rdf[1] and rdf[2]):
                             db_lock.acquire()
                             RDF(related_page=pg, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],
@@ -91,7 +91,7 @@ def generateRDFsFor(title):
                 "Unknown error appeared for page with title: " + str(title).strip() + "\n" +
                 "------------------------------")
 
-    lock.acquire()
-    num_threads -= 1
-    lock.release()
+    #lock.acquire()
+    #num_threads -= 1
+    #lock.release()
     return

@@ -54,7 +54,7 @@ def generateRDFsFor(title):
                     "Couldn\'t find wikipedia page with this title\n" +
                     "FAILED for page with title: " + str(title).strip() + "\n" +
                     "------------------------------")
-        if wpage:
+        if wpage and not Page.objects.filter(link=(str(wpage.url))):
             pg = Page(title=str(title), link=str(wpage.url), tables=len(wpage.tables))
             pg.save()
             if wpage.hasTable:
@@ -74,6 +74,8 @@ def generateRDFsFor(title):
                         db_lock.release()
             else:
                 print('Page with title \''+str(title).strip()+'\' has no tables')
+        else:
+            print('Page with title \'' + str(title).strip() + '\' has been extracted already')
     except Exception as inst:
         print("\n------------------------------\n" +
                 "Error appeared: " + str(type(inst)) + "\n" +

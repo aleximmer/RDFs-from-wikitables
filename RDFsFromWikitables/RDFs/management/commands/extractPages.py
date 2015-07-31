@@ -1,4 +1,4 @@
-import os.path
+﻿import os.path
 from _thread import start_new_thread, allocate_lock
 from collections import defaultdict
 from django.core.management.base import BaseCommand
@@ -63,7 +63,7 @@ class Command(BaseCommand):
             print("Couldn´t open file in given directory")
 
 def generateRDFsFor(title):
-    global num_threads, lock, db_lock
+    global num_threads, lock, db_lock, averageCrawl, countCrawl, averageExtr, countExtr, averageDb, countDb
 
     print("Title: "+ str(title).strip())
 

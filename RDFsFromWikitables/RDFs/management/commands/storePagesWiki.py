@@ -29,9 +29,11 @@ class Command(BaseCommand):
 
             start = time.time()
             for line in content:
+                if runner <= 6000000:
+                    continue
                 runner += 1
                 print(str(runner) + ' current line')
-                line = ('http://localhost:8888/' + line[7:]).rstrip()
+                line = (line[:4] + 's' + line[4:]).rstrip()
                 while(True):
                     lock.acquire()
                     if num_threads < THREAD_MAX:
@@ -41,6 +43,7 @@ class Command(BaseCommand):
                 num_threads += 1
                 start_new_thread(savePageFrom,(line,))
                 lock.release()
+            print(str((time.time() - start)/100) + ' seconds per link')
 
         except Exception as inst:
             print("Couldn´t open file in given directory")
@@ -60,9 +63,9 @@ def savePageFrom(url):
             titles = tree.xpath('/html/head/title/text()')
             if titles:
                 # get the wiki title and delete the standard marker
-                # or '- XOWA' in local development circumstances
-                title = titles[0][:-7]
-                if title == 'Bad title - XOWA':
+                # '- Wikipedia, the free encyclopedia'
+                title = titles[0][:-35]
+                if title == 'Bad title - Wikipedia, the free encyclopedia':
                     lock.acquire()
                     num_threads -= 1
                     lock.release()
@@ -76,7 +79,8 @@ def savePageFrom(url):
         except:
             print("Couldn't clean HTML")
 
-        pg = Page(link=url, title=title, html=full_text, from_xowa=True).save()
+        pg = Page(link=url, title=title, html=full_text, from_xowa=False).save()
+        print(str(url) + ' title: ' + str(title) + ' length of html: ' + str(len(full_text)))
     except IntegrityError:
         print("Article already existing")
 

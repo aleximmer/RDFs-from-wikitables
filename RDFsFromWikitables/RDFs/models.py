@@ -2,7 +2,8 @@ from django.db import models
 
 class Page(models.Model):
     link = models.URLField(max_length=256, unique=True)
-    title = models.CharField(max_length=512)
+    title = models.CharField(max_length=512, unique=True)
+    from_xowa = models.BooleanField()
     html = models.TextField(null=True, blank=True)
 
     def __str__(self):

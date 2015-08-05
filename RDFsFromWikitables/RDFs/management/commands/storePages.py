@@ -5,9 +5,10 @@ from RDFs.models import Page
 from RDFsFromWikitables.settings import PROJECT_DIR
 import requests
 from lxml import html
-from lxml.html.clean import clean_html
+from lxml.html.clean import Cleaner
+from django.db import IntegrityError
 
-THREAD_MAX = 3
+THREAD_MAX = 12
 
 num_threads = 0
 lock = allocate_lock()
@@ -15,7 +16,6 @@ db_lock = allocate_lock()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        #"""
         global num_threads, lock, db_lock
         runner = 0
         try:
@@ -24,53 +24,40 @@ class Command(BaseCommand):
             with open(urlsFile) as f:
                 content = f.readlines()
             print(str(len(content)) + ' lines in file')
-            try:
-                for line in content:
-                    runner += 1
-                    print(str(runner) + ' current line')
-                    line = (line[:4] + 's' + line[4:]).rstrip()
-                    while(True):
-                        lock.acquire()
-                        if num_threads < THREAD_MAX:
-                            break
-                        lock.release()
 
-                    num_threads += 1
-                    start_new_thread(savePageFrom,(line,))
+            for line in content:
+                if runner >= 100000:
+                    break
+                runner += 1
+                print(str(runner) + ' current line')
+                line = 'http://localhost:8888/' + line[7:]
+                while(True):
+                    lock.acquire()
+                    if num_threads < THREAD_MAX:
+                        break
                     lock.release()
 
-            except Exception as inst:
-                print("Error appeared: " + str(type(inst)))
-                print(inst.args)
-                print("Failure")
+                num_threads += 1
+                start_new_thread(savePageFrom,(line,))
+                lock.release()
+
         except Exception as inst:
             print("Couldn´t open file in given directory")
-        #"""
-
-
-        page = requests.get('https://en.wikipedia.org/wiki/AdolfHitler')
-        tree = html.fromstring(page.text)
-        title = tree.xpath('/html/head/title/text()')
-        print(title)
-        #print(page.text)
 
 
 def savePageFrom(url):
     global num_threads, db_lock
 
-    print("current url: " + str(url))
-
     try:
         wiki_page = requests.get(url)
-        full_text = wiki_page.text
-        print("got file")
+        url = wiki_page.url
+        full_text = wiki_page.text.rstrip('\n')
 
         # try to get the title with lxml
-        title = ''
+        title = 'url: ' + str(url)
         try:
             tree = html.fromstring(full_text)
             titles = tree.xpath('/html/head/title/text()')
-            print(titles)
             if titles:
                 # get the wiki title and delete the standard marker
                 # '- Wikipedia, the free encyclopedia'
@@ -83,9 +70,16 @@ def savePageFrom(url):
         except:
             print("Error while finding title")
 
-        pg = Page(link=url, title=title, html=full_text)
-        print(pg)
-        #print(page.text)
+        try:
+            cleaner = Cleaner(scripts=True, javascript=True, comments=True, style=True)
+            full_text = cleaner.clean_html(full_text)
+        except:
+            print("Couldn't clean HTML")
+
+        pg = Page(link=url, title=title, html=full_text).save()
+        print(url + ' title: ' + title + ' length of html: ' + str(len(full_text)))
+    except IntegrityError:
+        print("Article already existing")
 
     except:
         print("Couldn't open given URL" + str(url))

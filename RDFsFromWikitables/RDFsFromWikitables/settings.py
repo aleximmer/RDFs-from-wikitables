@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'RDFsFromWikitables.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'wiki_pages',
+        'NAME': 'html_dump',
         'USER': 'postgres',
         'PASSWORD': 'manager',
         'HOST': 'localhost',

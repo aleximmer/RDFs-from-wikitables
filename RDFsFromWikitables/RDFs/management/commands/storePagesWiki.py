@@ -8,8 +8,6 @@ from lxml import html
 from lxml.html.clean import Cleaner
 from django.db import IntegrityError
 
-import time
-
 THREAD_MAX = 8
 
 num_threads = 0
@@ -27,23 +25,20 @@ class Command(BaseCommand):
                 content = f.readlines()
             print(str(len(content)) + ' lines in file')
 
-            start = time.time()
             for line in content:
-                if runner <= 6000000:
-                    continue
                 runner += 1
-                print(str(runner) + ' current line')
-                line = (line[:4] + 's' + line[4:]).rstrip()
-                while(True):
-                    lock.acquire()
-                    if num_threads < THREAD_MAX:
-                        break
-                    lock.release()
+                if runner >= 6000000:
+                    print(str(runner) + ' current line')
+                    line = (line[:4] + 's' + line[4:]).rstrip()
+                    while(True):
+                        lock.acquire()
+                        if num_threads < THREAD_MAX:
+                            break
+                        lock.release()
 
-                num_threads += 1
-                start_new_thread(savePageFrom,(line,))
-                lock.release()
-            print(str((time.time() - start)/100) + ' seconds per link')
+                    num_threads += 1
+                    start_new_thread(savePageFrom,(line,))
+                    lock.release()
 
         except Exception as inst:
             print("Couldn´t open file in given directory")

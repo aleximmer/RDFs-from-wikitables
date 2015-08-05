@@ -30,17 +30,18 @@ class Command(BaseCommand):
             start = time.time()
             for line in content:
                 runner += 1
-                print(str(runner) + ' current line')
-                line = ('http://localhost:8888/' + line[7:]).rstrip()
-                while(True):
-                    lock.acquire()
-                    if num_threads < THREAD_MAX:
-                        break
-                    lock.release()
+                if runner < 6000000:
+                    print(str(runner) + ' current line')
+                    line = ('http://localhost:8888/' + line[7:]).rstrip()
+                    while(True):
+                        lock.acquire()
+                        if num_threads < THREAD_MAX:
+                            break
+                        lock.release()
 
-                num_threads += 1
-                start_new_thread(savePageFrom,(line,))
-                lock.release()
+                    num_threads += 1
+                    start_new_thread(savePageFrom,(line,))
+                    lock.release()
 
         except Exception as inst:
             print("Couldn´t open file in given directory")

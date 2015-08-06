@@ -2,7 +2,7 @@
 from _thread import start_new_thread, allocate_lock
 from collections import defaultdict
 from django.core.management.base import BaseCommand
-from RDFs.models import RDF, Page
+from RDFs.models import RDF, Page, Table
 from RDFsFromWikitables.settings import PROJECT_DIR
 from wikitables.localpage import LocalPage
 import wikipedia
@@ -55,7 +55,10 @@ class Command(BaseCommand):
 def generateRDFsFor(pg):
     global num_threads, lock, db_lock
 
-    loc_pg = LocalPage(pg.html, pg.link)
+    loc_pg = LocalPage(pg.title, pg.html, pg.link)
+    print(loc_pg.summary)
+    print(loc_pg.categories)
+    title = pg.title
 
     index = 0
     for table in loc_pg.tables:
@@ -69,10 +72,10 @@ def generateRDFsFor(pg):
             # exclude errors like empty subject, predicate or object and
             # errors such as subject != resource
             if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
-                RDF(table=table, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
+                RDF(table=tb, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                         object_column_name=rdf[3], relative_occurency=rdf[4],
                         subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                        table_number=i, number_of_tablerows=rdf[7]).save()
+                        table_number=index, number_of_tablerows=rdf[7]).save()
 
             db_lock.release()
             acquired = False

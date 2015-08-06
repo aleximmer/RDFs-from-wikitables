@@ -6,7 +6,6 @@ import json
 from collections import defaultdict
 from fuzzywuzzy import fuzz
 from copy import deepcopy
-from wikitables.page import *
 
 class Table:
 

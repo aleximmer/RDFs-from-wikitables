@@ -5,10 +5,11 @@ from django.core.management.base import BaseCommand
 from RDFs.models import RDF, Page
 from RDFsFromWikitables.settings import PROJECT_DIR
 from wikitables.page import Page as wikipage
+import wikipedia
 
 import time
 
-THREAD_MAX = 64
+THREAD_MAX = 16
 
 num_threads = 0
 lock = allocate_lock()
@@ -22,6 +23,10 @@ countExtr = 0
 
 averageDb = 0
 countDb = 0
+
+# MY TODO:
+# For each Page: -> All Tables of page: Title, HTML
+#       -> Get Page Object by Title, HTML
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -70,11 +75,15 @@ def generateRDFsFor(title):
     try:
         wpage = None
         try:
+
             t0 = time.time()
+            pgn = wikipedia.page(title)
+            print(pgn.url)
+            pgn.html()
+            deltaT = time.time() - t0
 
             wpage = wikipage(title)
 
-            deltaT = time.time() - t0
             averageCrawl = (countCrawl * averageCrawl + deltaT) / (countCrawl+1)
             countCrawl += 1
         except:

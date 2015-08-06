@@ -6,7 +6,6 @@ import json
 from collections import defaultdict
 from fuzzywuzzy import fuzz
 from copy import deepcopy
-from wikitables.page import *
 
 class Table:
 
@@ -79,7 +78,7 @@ class Table:
 
     @property
     def pageSummary(self):
-        return self.page.summary
+        return self.page.summary # FIXME:
 
     @property
     def pageLink(self):
@@ -87,7 +86,7 @@ class Table:
 
     @property
     def pageCategories(self):
-        return self.page.categories
+        return self.page.categories # FIXME:
 
     def row(self, i):
         return self.rows[i]
@@ -253,7 +252,7 @@ class Table:
         """Save RDF statements generated from table."""
         data = []
         keyIndex = self.key # Calculate name of key column
-        if keyIndex is not None and keyIndex < 0 and keyIndex >= len(self.columnNames):
+        if keyIndex is not None and keyIndex > 0 and keyIndex <= len(self.columnNames):
             keyColumnName = self.columnNames[keyIndex]
         else:
             keyColumnName = None

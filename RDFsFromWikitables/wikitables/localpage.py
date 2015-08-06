@@ -3,15 +3,20 @@ from bs4 import BeautifulSoup
 import requests
 from .table import Table
 from lxml import html
+import re
 
 class LocalPage:
 
-    def __init__(self, html, link):
+    def __init__(self, title, html, link):
         self.url = link
 
+        self._title = title
         self._tables = None
         self._html = html
         self._soup = None
+        self._summary = None
+        self._categories = None
+
 
     def __repr__(self):
         return "Title:\n\t%s\n\t%s\nTables:\n\t" % (self.title, self.url) + "\n\t".join([str(t) for t in self.tables])
@@ -39,23 +44,28 @@ class LocalPage:
     @property
     def title(self):
         if not self._title:
-            tree = html.fromstring(full_text)
-            # TODO: verify, sollte irgendwie so gehen...
-            self._title = tree.xpath('/html/head/title/text()')[0]
+            self._title = self.soup.find("h1", {"class": "firstHeading"}).text
         return self._title
 
     @property
     def summary(self):
         if not self._summary:
             # TODO
-            self._summary = 'XYSDFASDF'
+            content = self.soup.find("div", {"id": "mw-content-text"})
+            summaryParts = []
+            for c in content.findChildren():
+                if c.name == "p":
+                    summaryParts.append(c.text)
+                elif c.name == "div" and c.get("id") == "toc":
+                    # Arrived at TOC -> End of summary
+                    break;
+            self._summary = " ".join(summaryParts)
         return self._summary
 
     @property
     def categories(self):
         if not self._categories:
-            # TODO wirklich liste?
-            self._categories = []
+            self._categories = re.findall('title="Category:([^"]*)"',str(self.soup.find('div', {'class': 'mw-normal-catlinks'})))
         return self._categories
 
     def hasTable(self):

@@ -71,8 +71,8 @@ def generateRDFsFor(pg):
             if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
                 RDF(table=table, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                         object_column_name=rdf[3], relative_occurency=rdf[4],
-                        subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                        table_number=i, number_of_tablerows=rdf[7]).save()
+                        subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6])
+                        .save()
 
             db_lock.release()
             acquired = False

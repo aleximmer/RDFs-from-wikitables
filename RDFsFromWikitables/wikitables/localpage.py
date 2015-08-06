@@ -2,44 +2,25 @@ import wikipedia
 from bs4 import BeautifulSoup
 import requests
 from .table import Table
+from lxml import html
 
-class Page(wikipedia.WikipediaPage):
-    'This class abstracts Wikipedia articles to add table extraction functionality.'
+class LocalPage(object):
 
-    def __init__(self, title=None, revisionID='', pageid=None, redirect=True, preload=False, original_title='', auto_suggest=True):
-        # method taken from wikipedia.page to init OO-Style
-        if title is not None:
-          if auto_suggest:
-            results, suggestion = wikipedia.search(title, results=1, suggestion=True)
-            try:
-              title = suggestion or results[0]
-              super().__init__(title, redirect=redirect, preload=preload)
-            except: #IndexError:
-              raise wikipedia.PageError(title)
-        elif pageid is not None:
-          super().__init__(pageid=pageid, preload=preload)
-        else:
-          raise ValueError("Either a title or a pageid must be specified")
+    def __init__(self, html, link):
+        self.url = link
 
-        oldID = '&?&oldid='
-        if not revisionID:
-            oldID = ''
-        self.url = self.url + oldID + str(revisionID)
         self._tables = None
-        self._html = None
+        self._html = html
         self._soup = None
 
     def __repr__(self):
         return "Title:\n\t%s\n\t%s\nTables:\n\t" % (self.title, self.url) + "\n\t".join([str(t) for t in self.tables])
 
     def html(self):
-        # override from WikipediaPage
         return self.html
 
     @property
     def html(self):
-        if not self._html:
-            self._html = requests.get(self.url).text
         return self._html
 
     @property
@@ -53,6 +34,29 @@ class Page(wikipedia.WikipediaPage):
         if not self._tables:
             self._tables = [Table(table, self) for table in self.soup.findAll('table', 'wikitable')]
         return self._tables
+
+    """properties which are necessary for local use as they cannot be fetched from the API"""
+    @property
+    def title(self):
+        if not self._title:
+            tree = html.fromstring(full_text)
+            # TODO: verify, sollte irgendwie so gehen...
+            self._title = tree.xpath('/html/head/title/text()')[0]
+        return self._title
+
+    @property
+    def summary(self):
+        if not self._summary:
+            # TODO
+            self._summary = 'XYSDFASDF'
+        return self._summary
+
+    @property
+    def categories(self):
+        if not self._categories:
+            # TODO wirklich liste?
+            self._categories = []
+        return self._categories
 
     def hasTable(self):
         return True if self.tables else False

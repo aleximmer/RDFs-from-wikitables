@@ -9,7 +9,7 @@ import wikipedia
 
 import time
 
-THREAD_MAX = 16
+THREAD_MAX = 1
 
 num_threads = 0
 lock = allocate_lock()
@@ -28,6 +28,22 @@ db_lock = allocate_lock()
 # For each Page: -> All Tables of page: Title, HTML
 #       -> Get Page Object by Title, HTML
 # page = Page(title, pageid=id, html=dbHtml, link=dbLink)
+
+"""
+from RDFs.models import *
+
+for pg in Page.objects.all():
+    html = pg.html
+    #construct wikipage element called wikipg
+
+```
+
+alex [11:12 AM]
+```     index = 0
+     for table in wikipg.tables:
+          Table(page=pg, table_number=index, number_of_tablerows=len(table.rows???)).save()
+          index += 1
+"""
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

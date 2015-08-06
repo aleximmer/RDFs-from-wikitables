@@ -6,9 +6,12 @@ from .table import Table
 class Page(wikipedia.WikipediaPage):
     'This class abstracts Wikipedia articles to add table extraction functionality.'
 
-    def __init__(self, title=None, revisionID='', pageid=None, redirect=True, preload=False, original_title='', auto_suggest=True):
+    def __init__(self, title=None, revisionID='', pageid=None, redirect=True, preload=False, original_title='', auto_suggest=True, html=None, link=None):
         # method taken from wikipedia.page to init OO-Style
-        if title is not None:
+        if link is not None:
+          #super().__init__(title)#, pageid=pageid, preload=False)
+          self.url = link
+        elif title is not None:
           if auto_suggest:
             results, suggestion = wikipedia.search(title, results=1, suggestion=True)
             try:
@@ -26,7 +29,7 @@ class Page(wikipedia.WikipediaPage):
             oldID = ''
         self.url = self.url + oldID + str(revisionID)
         self._tables = None
-        self._html = None
+        self._html = html
         self._soup = None
 
     def __repr__(self):

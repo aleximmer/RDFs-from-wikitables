@@ -5,8 +5,15 @@ class RDFInline(admin.TabularInline):
     model = RDF
     extra = 0
 
-class PageAdmin(admin.ModelAdmin):
+class TableAdmin(admin.ModelAdmin):
     inlines = [RDFInline,]
+
+class TableInline(admin.TabularInline):
+    model = Table
+    extra = 0
+
+class PageAdmin(admin.ModelAdmin):
+    inlines = [TableInline,]
 
 class RDFAdmin(admin.ModelAdmin):
     list_display = ['rdf_subject', 'rdf_predicate', 'rdf_object', 'relative_occurency']
@@ -14,3 +21,4 @@ class RDFAdmin(admin.ModelAdmin):
 
 admin.site.register(Page, PageAdmin)
 admin.site.register(RDF, RDFAdmin)
+admin.site.register(Table, TableAdmin)

@@ -30,6 +30,7 @@ countDb = 0
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        runner = 0
         try:
             global num_threads, lock, db_lock
             titlesFile = os.path.join(PROJECT_DIR, "data/Titles.txt")
@@ -40,6 +41,8 @@ class Command(BaseCommand):
             try:
                 f = open('logAverageValues.txt', 'w')
                 for line in content:
+                    runner += 1
+                    print(str(runner) + ' current line')
                     while(True):
                         lock.acquire()
                         if num_threads < THREAD_MAX:

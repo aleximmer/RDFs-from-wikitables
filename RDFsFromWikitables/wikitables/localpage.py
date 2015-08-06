@@ -4,7 +4,7 @@ import requests
 from .table import Table
 from lxml import html
 
-class LocalPage(object):
+class LocalPage:
 
     def __init__(self, html, link):
         self.url = link

@@ -252,7 +252,7 @@ class Table:
         """Save RDF statements generated from table."""
         data = []
         keyIndex = self.key # Calculate name of key column
-        if keyIndex is not None and keyIndex < 0 and keyIndex >= len(self.columnNames):
+        if keyIndex is not None and keyIndex > 0 and keyIndex <= len(self.columnNames):
             keyColumnName = self.columnNames[keyIndex]
         else:
             keyColumnName = None

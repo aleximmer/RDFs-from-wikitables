@@ -9,7 +9,8 @@ class Page(wikipedia.WikipediaPage):
     def __init__(self, title=None, revisionID='', pageid=None, redirect=True, preload=False, original_title='', auto_suggest=True, html=None, link=None):
         # method taken from wikipedia.page to init OO-Style
         if link is not None:
-          #super().__init__(title)#, pageid=pageid, preload=False)
+          # super().__init__(title)#, pageid=pageid, preload=False)
+          self.title = title
           self.url = link
         elif title is not None:
           if auto_suggest:

@@ -9,7 +9,7 @@ import wikipedia
 
 import time
 
-THREAD_MAX = 16
+THREAD_MAX = 1
 
 num_threads = 0
 lock = allocate_lock()
@@ -120,7 +120,6 @@ def generateRDFsFor(page):
             for table in wpage.tables:
                 i += 1
                 t0 = time.time()
-
                 rdfs = table.generateRDFs()
 
                 deltaT = time.time() - t0

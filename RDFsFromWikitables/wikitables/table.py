@@ -79,7 +79,7 @@ class Table:
 
     @property
     def pageSummary(self):
-        return self.page.summary
+        return self.page.summary # FIXME:
 
     @property
     def pageLink(self):
@@ -87,7 +87,7 @@ class Table:
 
     @property
     def pageCategories(self):
-        return self.page.categories
+        return self.page.categories # FIXME:
 
     def row(self, i):
         return self.rows[i]

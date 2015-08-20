@@ -55,7 +55,8 @@ def generateRDFsFor(pg):
                         db_lock.acquire()
                         # exclude errors like empty subject, predicate or object and
                         # errors such as subject != resource
-                        if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
+                        if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]) and not ('http://dbpedia.org/ontology/wikiPageWikiLink' in rdf[1]):
+                            print(rdf[1])
                             RDF(table=tb, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],
                                     subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6]).save()

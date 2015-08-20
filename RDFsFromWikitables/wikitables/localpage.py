@@ -50,7 +50,6 @@ class LocalPage:
     @property
     def summary(self):
         if not self._summary:
-            # TODO
             content = self.soup.find("div", {"id": "mw-content-text"})
             summaryParts = []
             for c in content.findChildren():

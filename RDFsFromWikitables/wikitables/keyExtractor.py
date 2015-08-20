@@ -244,20 +244,20 @@ def _textualEvidenceWithAbstracts(uniqueCols, abstracts):
 		for col in uniqueCols:
 			colName = col['title']
 			for colWord in colName.split(' '):
-				if len(colWord) > 2:
+				if len(colWord) > 3:
 					colWordPl = re.escape(inflectEngine.plural(colWord))
 					colWord = re.escape(colWord)
 					occCount = len(re.findall('('+colWord+'|'+colWordPl+')', abstracts,flags=re.IGNORECASE))
 					# Rating by occurrence
 					col['rating'] += occCount * COLNAME_ABSTRACTS_SCALE
 # Find matches between column names and categories of the regarding list page.
-# Add for each match of a word (or its plural form) in the column name rating points to the column.
+# Add for each match of a word in the column name rating points to the column.
 def _findMatchWithListCategories(uniqueCols, listCategories):
 	for col in uniqueCols:
 		for cat in listCategories:
 			cat = cat.lower()
 			for colWord in col['title'].split(' '):
-				if len(colWord) > 2:
+				if len(colWord) > 3:
 					rating = fuzz.partial_ratio(colWord, cat)
 					if rating > LISTCAT_RATIO:
 						col['rating'] += LISTCAT_MATCH_POINTS
@@ -324,10 +324,11 @@ def extractKeyColumn(originalHTMLSoup, articleName, abstracts = '', listCategori
 		_lookForTHCol(uniqueCols)
 
 		# Spaltenname mit der Beschreibung (Abstracts) der Tabelle abgleichen (ähnlich wie mit dem Artikel-Name)
-		#_textualEvidenceWithAbstracts(uniqueCols, abstracts)
+		_textualEvidenceWithAbstracts(uniqueCols, abstracts)
 
 		# Listen-Kategorien mit den Spaltennamen abgleichen
-		#_findMatchWithListCategories(uniqueCols, listCategories)
+		_findMatchWithListCategories(uniqueCols, listCategories)
+
 
 		# Validiere die Bewertungen der Spalten
 		keyCol = _validateRatings(uniqueCols)

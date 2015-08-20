@@ -9,7 +9,7 @@ import wikipedia
 
 import time
 
-THREAD_MAX = 16
+THREAD_MAX = 1
 
 num_threads = 0
 lock = allocate_lock()

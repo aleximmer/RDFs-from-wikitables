@@ -9,7 +9,7 @@ import wikipedia
 
 import time
 
-THREAD_MAX = 1
+THREAD_MAX = 16
 
 num_threads = 0
 lock = allocate_lock()
@@ -37,13 +37,11 @@ def generateRDFsFor(pg):
     global num_threads, lock, db_lock
 
     loc_pg = LocalPage(pg.title, pg.html, pg.link)
-    title = pg.title
 
     index = 0
     for table in loc_pg.tables:
         try:
-            tb = Table(page=pg, table_number=index, number_of_tablerows=len(table.rows))
-            tb.save()
+            tb = Table.objects.get(page=pg, table_number=index)
 
             rdfs = table.generateRDFs()
             print(str(len(rdfs)) + ' new RDFs generated for table')

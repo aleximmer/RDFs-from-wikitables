@@ -17,17 +17,19 @@ class Command(BaseCommand):
         runner = 0
         global num_threads, lock, db_lock
 
-        for pg in Page.objects.all():
-            runner += 1
-            print(str(runner) + ' current page number')
+        for runner in range(1, 8556448):
             while(True):
                 lock.acquire()
                 if num_threads < THREAD_MAX:
                     break
                 lock.release()
             lock.release()
-            num_threads += 1
-            start_new_thread(storeTables,(pg, runner))
+            try:
+                pg = Page.objects.get(id=runner)
+                num_threads += 1
+                start_new_thread(storeTables,(pg, runner))
+            except:
+                print('No page with that id')
 
 
 def storeTables(pg, number):

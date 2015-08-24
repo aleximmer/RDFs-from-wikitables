@@ -27,10 +27,10 @@ class Command(BaseCommand):
                 lock.release()
             lock.release()
             num_threads += 1
-            start_new_thread(storeTables,(pg,))
+            start_new_thread(storeTables,(pg, runner))
 
 
-def storeTables(pg):
+def storeTables(pg, number):
     global num_threads, lock, db_lock
 
     loc_pg = LocalPage(pg.title, pg.html, pg.link)
@@ -45,6 +45,7 @@ def storeTables(pg):
 
     print(str(index) + ' tables')
 
+    print('page number ' + str(number) + ' fully extracted')
     lock.acquire()
     num_threads -= 1
     lock.release()

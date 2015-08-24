@@ -37,18 +37,13 @@ def storeTables(pg):
 
     index = 0
     for table in loc_pg.tables:
-        try:
-            db_lock.acquire()
-            tb = Table(page=pg, table_number=index, number_of_tablerows=len(table.rows))
-            tb.save()
-            db_lock.release()
-        except:
-            print('Unexpected error on database insert')
+        db_lock.acquire()
+        tb = Table(page=pg, table_number=index, number_of_tablerows=len(table.rows)).save()
+        db_lock.release()
 
         index += 1
 
-    if index == 0:
-        print('page has no tables')
+    print(str(index) + ' tables')
 
     lock.acquire()
     num_threads -= 1

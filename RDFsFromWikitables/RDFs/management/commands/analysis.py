@@ -11,7 +11,7 @@ def analyseExtent():
     pages_size = Page.objects.all().count()
 
     print('Amount of Tables: ' + str(tables_size))
-    print('Amount of Pages: ' str(pages_size))
+    print('Amount of Pages: ' + str(pages_size))
 
     pages_with_tables = Page.objects.filter(html_icontains='wikitable').count()
 

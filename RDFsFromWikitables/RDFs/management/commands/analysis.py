@@ -23,4 +23,4 @@ def analyseTriples():
     start = 0.05
     while start <= 1:
         threshold_count = append(RDF.objects.filter(relative_occurency__lte=start).count())
-        print('Threshold ' + str(start) + ' with ' str(threshold_count) + ' triples')
+        print('Threshold ' + str(start) + ' with ' + str(threshold_count) + ' triples')

@@ -20,20 +20,23 @@ class Command(BaseCommand):
         runner = 0
         global num_threads, lock, db_lock
 
-        for pg in Page.objects.all():
-            runner += 1
-            print(str(runner) + ' current page number')
+        for runner in range(1, 8556448):
             while(True):
                 lock.acquire()
                 if num_threads < THREAD_MAX:
                     break
                 lock.release()
             lock.release()
-            num_threads += 1
-            start_new_thread(generateRDFsFor,(pg,))
+            try:
+                pg = Page.objects.get(id=runner)
+                num_threads += 1
+                start_new_thread(generateRDFsFor,(pg, runner))
+            except:
+                print('No page with that id')
 
 
-def generateRDFsFor(pg):
+
+def generateRDFsFor(pg, number):
     global num_threads, lock, db_lock
 
     loc_pg = LocalPage(pg.title, pg.html, pg.link)
@@ -41,7 +44,8 @@ def generateRDFsFor(pg):
     index = 0
     for table in loc_pg.tables:
         try:
-            tb = Table.objects.get(page=pg, table_number=index)
+            tb = Table(page=pg, table_number=index, number_of_tablerows=len(table.rows))
+            tb.save()
 
             rdfs = table.generateRDFs()
             print(str(len(rdfs)) + ' new RDFs generated for table')
@@ -60,8 +64,8 @@ def generateRDFsFor(pg):
             print('Unexpected error occurred during RDF-generating')
 
         index += 1
-    if index == 0:
-        print('page has no tables')
+
+    print(str(index) + ' tables generated for page no ' + str(number))
 
     lock.acquire()
     num_threads -= 1

@@ -70,12 +70,15 @@ def generateRDFsFor(title):
         db_lock.acquire()
         if wpage and not Page.objects.filter(link=(str(wpage.url))):
             db_lock.release()
-            pg = Page(title=str(title), link=str(wpage.url), tables=len(wpage.tables))
+            pg = Page(title=str(title), link=str(wpage.url), html=wpage.html)
             pg.save()
             if wpage.hasTable:
-                i = -1
+                i = 0
                 for table in wpage.tables:
                     i += 1
+
+                    tb = Table(page=pg, table_number=i, number_of_tablerows=len(table.rows))
+                    tb.save()
 
                     rdfs = table.generateRDFs()
 
@@ -87,10 +90,9 @@ def generateRDFsFor(title):
                         # exclude errors like empty subject, predicate or object and
                         # errors such as subject != resource
                         if rdf[0] and rdf[1] and rdf[2] and ('/resource/' in rdf[0]):
-                            RDF(table=table, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
+                            RDF(table=tb, rdf_subject=rdf[0], rdf_predicate=rdf[1], rdf_object=rdf[2],
                                     object_column_name=rdf[3], relative_occurency=rdf[4],
-                                    subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6],
-                                    table_number=i, number_of_tablerows=rdf[7]).save()
+                                    subject_is_tablekey=rdf[5], object_is_tablekey=rdf[6]).save()
                         db_lock.release()
                         acquired = False
             else:

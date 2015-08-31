@@ -27,18 +27,17 @@ class Command(BaseCommand):
 
             for line in content:
                 runner += 1
-                if runner >= 6000000:
-                    print(str(runner) + ' current line')
-                    line = (line[:4] + 's' + line[4:]).rstrip()
-                    while(True):
-                        lock.acquire()
-                        if num_threads < THREAD_MAX:
-                            break
-                        lock.release()
-
-                    num_threads += 1
-                    start_new_thread(savePageFrom,(line,))
+                print(str(runner) + ' current line')
+                line = (line[:4] + 's' + line[4:]).rstrip()
+                while(True):
+                    lock.acquire()
+                    if num_threads < THREAD_MAX:
+                        break
                     lock.release()
+
+                num_threads += 1
+                start_new_thread(savePageFrom,(line,))
+                lock.release()
 
         except Exception as inst:
             print("Couldn´t open file in given directory")
@@ -74,7 +73,7 @@ def savePageFrom(url):
         except:
             print("Couldn't clean HTML")
 
-        pg = Page(link=url, title=title, html=full_text, from_xowa=False).save()
+        pg = Page(link=url, title=title, html=full_text).save()
         print(str(url) + ' title: ' + str(title) + ' length of html: ' + str(len(full_text)))
     except IntegrityError:
         print("Article already existing")

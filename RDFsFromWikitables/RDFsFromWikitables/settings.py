@@ -74,14 +74,14 @@ WSGI_APPLICATION = 'RDFsFromWikitables.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-#"""
+# use sqlite3 for local testing. otherwise add settings for postgreSQL or mySQL
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'html_dump',
-        'USER': 'postgres',
-        'PASSWORD': 'manager',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432',
     }
